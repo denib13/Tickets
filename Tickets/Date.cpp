@@ -3,7 +3,12 @@
 
 bool Date::isLeapYear()
 {
-	return (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0)) ? true : false;
+	return (year % 400 == 0 || (year % 4 == 0 && year % 100 != 0));
+}
+
+Date::Date()
+{
+	day = month = year = 0;
 }
 
 Date::Date(unsigned day, unsigned month, unsigned year)

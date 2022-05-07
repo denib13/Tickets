@@ -140,12 +140,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Date.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="Hall.cpp" />
+    <ClCompile Include="MyString.cpp" />
+    <ClCompile Include="TicketCenter.cpp" />
     <ClCompile Include="Tickets.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Date.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="Hall.h" />
+    <ClInclude Include="MyString.h" />
+    <ClInclude Include="Reservation.h" />
+    <ClInclude Include="TicketCenter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

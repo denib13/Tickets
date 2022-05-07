@@ -10,7 +10,9 @@ class Date
 	bool isLeapYear();
 
 	unsigned daysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+
 public:
+	Date();
 	Date(unsigned day, unsigned month, unsigned year);
 
 	void setDay(unsigned day);
