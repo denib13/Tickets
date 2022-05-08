@@ -88,3 +88,9 @@ std::ostream& operator<<(std::ostream& stream, const Hall& hall)
 	stream << hall.number << std::setw(8) << hall.rows << std::setw(8) << hall.seats << std::endl;
 	return stream;
 }
+
+bool operator==(const Hall& lhs, const Hall& rhs)
+{
+	return (lhs.getNumber() == rhs.getNumber() && lhs.getRows() == rhs.getRows()
+		&& lhs.getSeatsCount() == rhs.getSeatsCount());
+}

@@ -1,14 +1,23 @@
 #pragma once
 #include "Hall.h"
+#include "Reservation.h"
+#include "List.hpp"
 
 class TicketCenter
 {
 	Hall* halls;
-	unsigned count;
+	List<Event> events;
+	List<Reservation> reservations;
+	unsigned hallsCount;
+
+	char hallsFile[10] = "halls.txt";
+	char eventsFile[11] = "events.txt";
+	char reservationsFile[17] = "reservations.txt";
 
 	void free();
 	void copyFrom(const TicketCenter&);
 	int getHallIndex(unsigned);
+	bool isHallBuzy(const Hall& hall, const Date& date) const;
 public:
 	TicketCenter(const char*);
 	TicketCenter(const TicketCenter&);

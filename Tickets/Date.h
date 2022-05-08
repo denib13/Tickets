@@ -26,3 +26,4 @@ public:
 	friend std::istream& operator>>(std::istream& stream, Date& date);
 	friend std::ostream& operator<<(std::ostream& stream, const Date& date);
 };
+bool operator==(const Date&, const Date&);

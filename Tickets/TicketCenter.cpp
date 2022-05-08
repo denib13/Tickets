@@ -14,7 +14,7 @@ int getNumberOfLines(std::fstream& file)
 	{
 		char buff[1024];
 		file.getline(buff, 1023);
-		
+
 		count++;
 		file.peek();
 	}
@@ -31,18 +31,20 @@ void TicketCenter::free()
 
 void TicketCenter::copyFrom(const TicketCenter& other)
 {
-	count = other.count;
+	hallsCount = other.hallsCount;
 
-	halls = new Hall[count];
-	for (size_t i = 0; i < count; i++)
+	halls = new Hall[hallsCount];
+	for (size_t i = 0; i < hallsCount; i++)
 	{
 		halls[i] = other.halls[i];
 	}
+	events = other.events;
+	reservations = other.reservations;
 }
 
 int TicketCenter::getHallIndex(unsigned number)
 {
-	for (size_t i = 0; i < count; i++)
+	for (size_t i = 0; i < hallsCount; i++)
 	{
 		if (halls[i].getNumber() == number)
 			return i;
@@ -50,23 +52,23 @@ int TicketCenter::getHallIndex(unsigned number)
 	return -1;
 }
 
-TicketCenter::TicketCenter(const char* filePath)
+TicketCenter::TicketCenter(const char* filePath) : events(eventsFile), reservations(reservationsFile)
 {
 	std::fstream file(filePath, std::ios::in);
 	if (!file.is_open())
 		throw std::exception("Error reading from file!");
 
-	count = getNumberOfLines(file) - 1;
+	hallsCount = getNumberOfLines(file) - 1;
 
 	//първият ред от файла е заглавен ред, затова го прочитаме и пропускаме
 	char buff[1024];
 	file.getline(buff, 1023);
 
-	halls = new Hall[count];
-	for (size_t i = 0; i < count; i++)
+	halls = new Hall[hallsCount];
+	for (size_t i = 0; i < hallsCount; i++)
 	{
 		file >> halls[i];
-		std::cout << halls[i];
+		//std::cout << halls[i];
 	}
 	
 	try
@@ -79,14 +81,14 @@ TicketCenter::TicketCenter(const char* filePath)
 	}
 }
 
-TicketCenter::TicketCenter(const TicketCenter& other)
+TicketCenter::TicketCenter(const TicketCenter& other) : events(other.events), reservations(other.reservations)
 {
 	copyFrom(other);
 }
 
-TicketCenter::TicketCenter(TicketCenter&& other)
+TicketCenter::TicketCenter(TicketCenter&& other) : events(other.events), reservations(other.reservations)
 {
-	count = other.count;
+	hallsCount = other.hallsCount;
 	halls = other.halls;
 
 	other.halls = nullptr;
@@ -112,7 +114,7 @@ TicketCenter& TicketCenter::operator=(TicketCenter&& other)
 	if (this != &other)
 	{
 		free();
-		count = other.count;
+		hallsCount = other.hallsCount;
 		halls = other.halls;
 
 		other.halls = nullptr;
@@ -138,10 +140,26 @@ void TicketCenter::newEvent()
 		std::cin >> hallNum;
 		hallIndex = getHallIndex(hallNum);
 	} while (hallIndex == -1);
-	//не трябва да са всички данни, само номер на залата! не създаваме обект, намираме го
-	//има ли в тази зала друго представление на тази дата?
+
+	if (!isHallBuzy(halls[hallIndex], date))
+	{
+		Event newEvent(name, date, halls[hallIndex]);
+		std::cout << newEvent << std::endl;
+		std::cin.ignore();
+		events.add(newEvent);
+	}
+	else
+		std::cout << "Hall is buzy on this date!";
 	//add validation
-	Event newEvent(name, date, halls[hallIndex]);
-	//write to file
+}
+
+bool TicketCenter::isHallBuzy(const Hall& hall, const Date& date) const
+{
+	for (size_t i = 0; i < events.count; i++)
+	{
+		if (events.data->hall == hall && events.data->date == date)
+			return true;
+	}
+	return false;
 }
 

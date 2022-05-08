@@ -23,3 +23,4 @@ public:
 	friend std::istream& operator>>(std::istream&, Hall&);
 	friend std::ostream& operator<<(std::ostream&, const Hall&);
 };
+bool operator==(const Hall&, const Hall&);

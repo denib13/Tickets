@@ -2,6 +2,7 @@
 #include <fstream>
 #include "Date.h"
 #include "Hall.h"
+#include "Event.h"
 #include "TicketCenter.h"
 
 int main()
@@ -22,5 +23,10 @@ int main()
     std::cout << h;*/
 
     TicketCenter t("halls.txt");
-
+    t.newEvent();
+    t.newEvent();
+    t.newEvent();
+    /*Event event;
+    std::cin >> event;
+    std::cout << event;*/
 }

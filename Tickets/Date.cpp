@@ -95,3 +95,9 @@ std::ostream& operator<<(std::ostream& stream, const Date& date)
 	stream << date.month << "/" << date.year;
 	return stream;
 }
+
+bool operator==(const Date& lhs, const Date& rhs)
+{
+	return (lhs.getDay() == rhs.getDay() && lhs.getMonth() == rhs.getMonth()
+		&& lhs.getYear() == rhs.getYear());
+}
