@@ -24,8 +24,8 @@ int main()
 
     TicketCenter t("halls.txt");
     t.newEvent();
-    t.newEvent();
-    t.newEvent();
+    t.reserveTicket();
+    t.reserveTicket();
     /*Event event;
     std::cin >> event;
     std::cout << event;*/

@@ -42,7 +42,7 @@ void TicketCenter::copyFrom(const TicketCenter& other)
 	reservations = other.reservations;
 }
 
-int TicketCenter::getHallIndex(unsigned number)
+int TicketCenter::getHallIndex(unsigned number) const
 {
 	for (size_t i = 0; i < hallsCount; i++)
 	{
@@ -144,22 +144,72 @@ void TicketCenter::newEvent()
 	if (!isHallBuzy(halls[hallIndex], date))
 	{
 		Event newEvent(name, date, halls[hallIndex]);
+		//just for testing purposes
 		std::cout << newEvent << std::endl;
 		std::cin.ignore();
 		events.add(newEvent);
 	}
 	else
-		std::cout << "Hall is buzy on this date!";
+	{
+		std::cout << "Hall is buzy on this date!" << std::endl;
+		std::cin.ignore();
+	}
+		
 	//add validation
 }
+
+void TicketCenter::reserveTicket()
+{
+	MyString eventName, password, note;
+	Date eventDate;
+	unsigned row, seat;
+
+	std::cout << "Enter event name: ";
+	std::cin >> eventName;
+	std::cout << "Enter event date: ";
+	std::cin >> eventDate;
+
+	size_t eventIndex = findEvent(eventName, eventDate);
+	if (eventIndex != -1)
+	{
+		std::cout << "Enter row: ";
+		std::cin >> row;
+		std::cout << "Enter seat: ";
+		std::cin >> seat;
+		std::cin.ignore();
+		//check if seat is already reserved!
+		std::cout << "Enter password: ";
+		std::cin >> password;
+		std::cout << "Enter note or press enter to skip: ";
+		std::cin >> note;
+
+		Reservation newReservation(events[eventIndex], row, seat, password, note);
+		std::cout << newReservation;
+		reservations.add(newReservation);
+		//change seat status
+	}
+	else
+		std::cout << "Such event does not exist!";
+}
+
 
 bool TicketCenter::isHallBuzy(const Hall& hall, const Date& date) const
 {
 	for (size_t i = 0; i < events.count; i++)
 	{
-		if (events.data->hall == hall && events.data->date == date)
+		if (events.data[i].hall == hall && events.data[i].date == date)
 			return true;
 	}
 	return false;
+}
+
+size_t TicketCenter::findEvent(const MyString& name, const Date& date) const
+{
+	for (size_t i = 0; i < events.count; i++)
+	{
+		if (events.data[i].name == name && events.data[i].date == date)
+			return i;
+	}
+	return -1;
 }
 

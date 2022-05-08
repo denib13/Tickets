@@ -143,6 +143,7 @@
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="Hall.cpp" />
     <ClCompile Include="MyString.cpp" />
+    <ClCompile Include="Reservation.cpp" />
     <ClCompile Include="TicketCenter.cpp" />
     <ClCompile Include="Tickets.cpp" />
   </ItemGroup>
@@ -153,6 +154,7 @@
     <ClInclude Include="List.hpp" />
     <ClInclude Include="MyString.h" />
     <ClInclude Include="Reservation.h" />
+    <ClInclude Include="Seats.h" />
     <ClInclude Include="TicketCenter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

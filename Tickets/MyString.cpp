@@ -102,3 +102,8 @@ std::istream& operator>>(std::istream& stream, MyString& string)
 	string.setString(input);
 	return stream;
 }
+
+bool operator==(const MyString& lhs, const MyString& rhs)
+{
+	return (strcmp(lhs.getString(), rhs.getString()) == 0);
+}

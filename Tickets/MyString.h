@@ -27,3 +27,4 @@ public:
 	friend std::ostream& operator<<(std::ostream&, const MyString&);
 	friend std::istream& operator>>(std::istream&, MyString&);
 };
+bool operator==(const MyString&, const MyString&);

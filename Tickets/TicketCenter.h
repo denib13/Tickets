@@ -16,8 +16,9 @@ class TicketCenter
 
 	void free();
 	void copyFrom(const TicketCenter&);
-	int getHallIndex(unsigned);
+	int getHallIndex(unsigned) const;
 	bool isHallBuzy(const Hall& hall, const Date& date) const;
+	size_t findEvent(const MyString& name, const Date& date) const;
 public:
 	TicketCenter(const char*);
 	TicketCenter(const TicketCenter&);
