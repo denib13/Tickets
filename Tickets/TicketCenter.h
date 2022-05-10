@@ -19,6 +19,7 @@ class TicketCenter
 	int getHallIndex(unsigned) const;
 	bool isHallBuzy(const Hall& hall, const Date& date) const;
 	size_t findEvent(const MyString& name, const Date& date) const;
+	size_t findReservation(const Event& event, unsigned row, unsigned seat) const;
 public:
 	TicketCenter(const char*);
 	TicketCenter(const TicketCenter&);

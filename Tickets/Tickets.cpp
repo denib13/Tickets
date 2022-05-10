@@ -27,6 +27,8 @@ int main()
     t.reserveTicket();
     t.reserveTicket();
     t.availableSeats();
+    t.cancelReservation();
+    t.availableSeats();
     /*Event event;
     std::cin >> event;
     std::cout << event;*/

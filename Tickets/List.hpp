@@ -28,7 +28,7 @@ public:
 	size_t getCount() const;
 
 	void add(const T&);
-	//void removeAtIndex(size_t);
+	void removeAtIndex(size_t);
 };
 
 template<typename T>
@@ -184,9 +184,26 @@ void List<T>::add(const T& object)
 
 	data[count++] = object;
 }
-//
-//template<typename T>
-//void List<T>::removeAtIndex(size_t)
-//{
-//
-//}
+
+template<typename T>
+void List<T>::removeAtIndex(size_t index)
+{
+	if (0 <= index && index < count)
+	{
+		T* newArray = new T[count - 1];
+		for (size_t i = 0; i < index; i++)
+		{
+			newArray[i] = data[i];
+		}
+		for (size_t i = index + 1; i < count; i++)
+		{
+			newArray[i - 1] = data[i];
+		}
+		free();
+		data = newArray;
+		count--;
+
+	}
+	else
+		throw std::exception("Index out of range!");
+}

@@ -171,6 +171,7 @@ void TicketCenter::availableSeats()
 	if (eventIndex != -1)
 	{
 		events[eventIndex].seats.print();
+		std::cin.ignore();
 	}
 	else
 		std::cout << "Such event does not exist!";
@@ -206,10 +207,51 @@ void TicketCenter::reserveTicket()
 			Reservation newReservation(events[eventIndex], row, seat, password, note);
 			std::cout << newReservation;
 			reservations.add(newReservation);
-			events[eventIndex].seats.changeStatus(row, seat, reserved);
+			events[eventIndex].seats.changeStatus(row, seat, sold);//change to reserved!
 		}
 		else
 			std::cout << "Seat is not available!" << std::endl;
+	}
+	else
+		std::cout << "Such event does not exist!";
+}
+
+void TicketCenter::cancelReservation()
+{
+	MyString eventName;
+	Date eventDate;
+	unsigned row, seat;
+	MyString password;
+
+	std::cout << "Enter event name: ";
+	std::cin >> eventName;
+	std::cout << "Enter event date: ";
+	std::cin >> eventDate;
+
+	size_t eventIndex = findEvent(eventName, eventDate);
+	if (eventIndex != -1)
+	{
+		std::cout << "Enter row: ";
+		std::cin >> row;
+		std::cout << "Enter seat: ";
+		std::cin >> seat;
+		std::cin.ignore();
+
+		size_t reservationIndex = findReservation(events[eventIndex], row, seat);
+		if (reservationIndex != -1)
+		{
+			std::cout << "Enter password: ";
+			std::cin >> password;
+			if (reservations[reservationIndex].password == password)
+			{
+				reservations.removeAtIndex(reservationIndex);
+				events[eventIndex].seats.changeStatus(row, seat, available);
+			}
+			else
+				std::cout << "Wrong password!";
+		}
+		else
+			std::cout << "Such reservation does not exist!";
 	}
 	else
 		std::cout << "Such event does not exist!";
@@ -231,6 +273,17 @@ size_t TicketCenter::findEvent(const MyString& name, const Date& date) const
 	for (size_t i = 0; i < events.count; i++)
 	{
 		if (events.data[i].name == name && events.data[i].date == date)
+			return i;
+	}
+	return -1;
+}
+
+size_t TicketCenter::findReservation(const Event& event, unsigned row, unsigned seat) const
+{
+	for (size_t i = 0; i < reservations.count; i++)
+	{
+		if (reservations.data[i].event == event && reservations.data[i].row == row &&
+			reservations.data[i].seat == seat)
 			return i;
 	}
 	return -1;
