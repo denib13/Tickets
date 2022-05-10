@@ -13,14 +13,14 @@ class Reservation
 public:
 	friend class TicketCenter;
 	Reservation();
-	Reservation(const Event&, unsigned, unsigned, const MyString&, const MyString&);
+	Reservation(const Event& event, unsigned row, unsigned seat, const MyString& password, const MyString& note);
 
-	void setEvent(const Event&);
-	void setPassword(const MyString&);
-	void setNote(const MyString&);
-	void setRow(unsigned);
-	void setSeat(unsigned);
+	void setEvent(const Event& event);
+	void setPassword(const MyString& password);
+	void setNote(const MyString& note);
+	void setRow(unsigned row);
+	void setSeat(unsigned seat);
 
-	friend std::istream& operator>>(std::istream&, Reservation&);
-	friend std::ostream& operator<<(std::ostream&, const Reservation&);
+	friend std::istream& operator>>(std::istream& stream, Reservation& reservation);
+	friend std::ostream& operator<<(std::ostream& stream, const Reservation& reservation);
 };

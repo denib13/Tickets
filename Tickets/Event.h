@@ -14,17 +14,17 @@ class Event
 public:
 	friend class TicketCenter;
 	Event();
-	Event(const MyString&, const Date&, const Hall&);
+	Event(const MyString& name, const Date& date, const Hall& hall);
 
 	const MyString getName() const;
 	const Date getDate() const;
 	const Hall getHall() const;
 
-	void setName(const MyString&);
-	void setDate(const Date&);
-	void setHall(const Hall&);
+	void setName(const MyString& name);
+	void setDate(const Date& date);
+	void setHall(const Hall& hall);
 
-	friend std::istream& operator>>(std::istream&, Event&);
-	friend std::ostream& operator<<(std::ostream&, const Event&);
+	friend std::istream& operator>>(std::istream& stream, Event& event);
+	friend std::ostream& operator<<(std::ostream& stream, const Event& event);
 };
-bool operator==(const Event&, const Event&);
+bool operator==(const Event& lhs, const Event& rhs);

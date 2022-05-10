@@ -12,19 +12,19 @@ class Seats {
 	unsigned cols;
 
 	void free();
-	void copyFrom(const Seats&);
+	void copyFrom(const Seats& other);
 public:
 	Seats();
-	Seats(unsigned, unsigned);
-	Seats(const Seats&);
-	Seats(Seats&&);
+	Seats(unsigned rows, unsigned cols);
+	Seats(const Seats& other);
+	Seats(Seats&& other);
 	~Seats();
 	
-	const Status getStatus(unsigned, unsigned) const;
+	const Status getStatus(unsigned row, unsigned col) const;
 
-	Seats& operator=(const Seats&);
-	Seats& operator=(Seats&&);
+	Seats& operator=(const Seats& other);
+	Seats& operator=(Seats&& other);
 
-	void changeStatus(unsigned, unsigned, Status);
+	void changeStatus(unsigned row, unsigned seat, Status newStatus);
 	void print() const;
 };

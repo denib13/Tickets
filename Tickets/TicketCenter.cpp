@@ -42,11 +42,11 @@ void TicketCenter::copyFrom(const TicketCenter& other)
 	reservations = other.reservations;
 }
 
-int TicketCenter::getHallIndex(unsigned number) const
+int TicketCenter::getHallIndex(unsigned hallNumber) const
 {
 	for (size_t i = 0; i < hallsCount; i++)
 	{
-		if (halls[i].getNumber() == number)
+		if (halls[i].getNumber() == hallNumber)
 			return i;
 	}
 	return -1;
@@ -197,7 +197,7 @@ void TicketCenter::reserveTicket()
 		std::cin >> seat;
 		std::cin.ignore();
 		
-		if (events[eventIndex].seats.getStatus(row - 1, seat - 1) == available)
+		if (events[eventIndex].seats.getStatus(row, seat) == available)
 		{
 			std::cout << "Enter password: ";
 			std::cin >> password;
@@ -207,7 +207,7 @@ void TicketCenter::reserveTicket()
 			Reservation newReservation(events[eventIndex], row, seat, password, note);
 			std::cout << newReservation;
 			reservations.add(newReservation);
-			events[eventIndex].seats.changeStatus(row, seat, sold);//change to reserved!
+			events[eventIndex].seats.changeStatus(row, seat, reserved);//change to reserved!
 		}
 		else
 			std::cout << "Seat is not available!" << std::endl;
@@ -252,6 +252,47 @@ void TicketCenter::cancelReservation()
 		}
 		else
 			std::cout << "Such reservation does not exist!";
+	}
+	else
+		std::cout << "Such event does not exist!";
+}
+
+void TicketCenter::buyTicket()
+{
+	MyString eventName;
+	Date eventDate;
+	unsigned row, seat;
+
+	std::cout << "Enter event name: ";
+	std::cin >> eventName;
+	std::cout << "Enter event date: ";
+	std::cin >> eventDate;
+
+	size_t eventIndex = findEvent(eventName, eventDate);
+	if (eventIndex != -1)
+	{
+		std::cout << "Enter row: ";
+		std::cin >> row;
+		std::cout << "Enter seat: ";
+		std::cin >> seat;
+		std::cin.ignore();
+
+		Status seatStatus = events[eventIndex].seats.getStatus(row, seat);
+		if (seatStatus == available)
+			events[eventIndex].seats.changeStatus(row, seat, sold);
+		else if (seatStatus == reserved)
+		{
+			MyString password;
+			std::cout << "Seat is reserved. Enter reservation password: ";
+			std::cin >> password;
+			size_t reservationIndex = findReservation(events[eventIndex], row, seat);
+			if (reservations[reservationIndex].password == password)
+				events[eventIndex].seats.changeStatus(row, seat, sold);
+			else
+				std::cout << "Wrong password!";
+		}
+		else
+			std::cout << "Seat is already sold!";
 	}
 	else
 		std::cout << "Such event does not exist!";

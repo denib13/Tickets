@@ -10,7 +10,7 @@ class List
 	void free();
 	void copyFrom(const List&);
 	void resize();
-	void readFromFile(std::fstream& file);
+	//void readFromFile(std::fstream& file);
 	size_t findElement(const T&) const;
 public:
 	friend class TicketCenter;

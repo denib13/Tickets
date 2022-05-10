@@ -69,8 +69,8 @@ Seats::~Seats()
 
 const Status Seats::getStatus(unsigned row, unsigned col) const
 {
-	if (0 <= row && row < rows && 0 <= col && col < cols)
-		return seats[row][col];
+	if (0 < row && row <= rows && 0 < col && col <= cols)
+		return seats[row - 1][col - 1];
 	throw std::exception("Seat does not exist!");
 }
 

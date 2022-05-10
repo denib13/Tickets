@@ -16,11 +16,11 @@ public:
 	unsigned getRows() const;
 	unsigned getSeatsCount() const;
 
-	void setNumber(unsigned);
-	void setRows(unsigned);
-	void setSeats(unsigned);
+	void setNumber(unsigned number);
+	void setRows(unsigned rows);
+	void setSeats(unsigned seats);
 
-	friend std::istream& operator>>(std::istream&, Hall&);
-	friend std::ostream& operator<<(std::ostream&, const Hall&);
+	friend std::istream& operator>>(std::istream& stream, Hall& hall);
+	friend std::ostream& operator<<(std::ostream& stream, const Hall& hall);
 };
-bool operator==(const Hall&, const Hall&);
+bool operator==(const Hall& lhs, const Hall& rhs);
