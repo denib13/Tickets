@@ -158,6 +158,24 @@ void TicketCenter::newEvent()
 	//add validation
 }
 
+void TicketCenter::availableSeats()
+{
+	MyString eventName;
+	Date eventDate;
+	std::cout << "Enter event name: ";
+	std::cin >> eventName;
+	std::cout << "Enter event date: ";
+	std::cin >> eventDate;
+
+	size_t eventIndex = findEvent(eventName, eventDate);
+	if (eventIndex != -1)
+	{
+		events[eventIndex].seats.print();
+	}
+	else
+		std::cout << "Such event does not exist!";
+}
+
 void TicketCenter::reserveTicket()
 {
 	MyString eventName, password, note;
@@ -177,16 +195,21 @@ void TicketCenter::reserveTicket()
 		std::cout << "Enter seat: ";
 		std::cin >> seat;
 		std::cin.ignore();
-		//check if seat is already reserved!
-		std::cout << "Enter password: ";
-		std::cin >> password;
-		std::cout << "Enter note or press enter to skip: ";
-		std::cin >> note;
+		
+		if (events[eventIndex].seats.getStatus(row - 1, seat - 1) == available)
+		{
+			std::cout << "Enter password: ";
+			std::cin >> password;
+			std::cout << "Enter note or press enter to skip: ";
+			std::cin >> note;
 
-		Reservation newReservation(events[eventIndex], row, seat, password, note);
-		std::cout << newReservation;
-		reservations.add(newReservation);
-		//change seat status
+			Reservation newReservation(events[eventIndex], row, seat, password, note);
+			std::cout << newReservation;
+			reservations.add(newReservation);
+			events[eventIndex].seats.changeStatus(row, seat, reserved);
+		}
+		else
+			std::cout << "Seat is not available!" << std::endl;
 	}
 	else
 		std::cout << "Such event does not exist!";

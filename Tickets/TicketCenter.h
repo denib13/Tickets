@@ -29,7 +29,7 @@ public:
 	TicketCenter& operator=(TicketCenter&&);
 
 	void newEvent();
-	void freeSeats();
+	void availableSeats();
 	void reserveTicket();
 	void cancelReservation();
 	void buyTicket();

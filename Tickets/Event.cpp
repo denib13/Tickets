@@ -1,7 +1,7 @@
 #include "Event.h"
 #include <iomanip>
 
-Event::Event() : date(), hall()
+Event::Event() : date(), hall(), seats()
 {
 	name = "Empty event";
 }
@@ -41,6 +41,8 @@ void Event::setDate(const Date& date)
 void Event::setHall(const Hall& hall)
 {
 	this->hall = hall;
+	Seats seats(hall.getRows(), hall.getSeatsCount());
+	this->seats = seats;
 }
 
 std::istream& operator>>(std::istream& stream, Event& event)

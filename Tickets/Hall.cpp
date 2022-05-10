@@ -85,7 +85,7 @@ std::istream& operator>>(std::istream& stream, Hall& hall)
 
 std::ostream& operator<<(std::ostream& stream, const Hall& hall)
 {
-	stream << hall.number << std::setw(8) << hall.rows << std::setw(8) << hall.seats << std::endl;
+	stream << hall.number << std::setw(8) << hall.rows << std::setw(8) << hall.seats;
 	return stream;
 }
 

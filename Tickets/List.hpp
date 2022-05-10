@@ -23,7 +23,7 @@ public:
 
 	List& operator=(const List&);
 	List& operator=(List&&);
-	T operator[](size_t) const;
+	T& operator[](size_t) const;
 
 	size_t getCount() const;
 
@@ -153,6 +153,7 @@ List<T>& List<T>::operator=(List<T>&& other)
 {
 	if (this != &other)
 	{
+		free();
 		count = other.count;
 		capacity = other.capacity;
 		data = other.data;
@@ -163,7 +164,7 @@ List<T>& List<T>::operator=(List<T>&& other)
 }
 
 template<typename T>
-T List<T>::operator[](size_t index) const
+T& List<T>::operator[](size_t index) const
 {
 	if(0 <= index && index < count)
 		return data[index];

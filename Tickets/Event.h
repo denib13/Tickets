@@ -2,6 +2,7 @@
 #include "MyString.h"
 #include "Date.h"
 #include "Hall.h"
+#include "Seats.h"
 #include <iostream>
 
 class Event
@@ -9,6 +10,7 @@ class Event
 	MyString name;
 	Date date;
 	Hall hall;
+	Seats seats;
 public:
 	friend class TicketCenter;
 	Event();
