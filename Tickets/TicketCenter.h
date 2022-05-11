@@ -20,6 +20,10 @@ class TicketCenter
 	bool isHallBuzy(const Hall& hall, const Date& date) const;
 	size_t findEvent(const MyString& name, const Date& date) const;
 	size_t findReservation(const Event& event, unsigned row, unsigned seat) const;
+	void writeEventsToFile(const char* filePath) const;
+	void writeReservationsToFile(const char* filePath) const;
+	void loadEventsList(const char* filePath);
+	void loadReservationsList(const char* filePath);
 public:
 	TicketCenter(const char* filePath);
 	TicketCenter(const TicketCenter& other);

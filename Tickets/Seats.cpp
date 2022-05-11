@@ -14,6 +14,7 @@ void Seats::copyFrom(const Seats& other)
 {
 	rows = other.rows;
 	cols = other.cols;
+	soldSeatsCount = other.soldSeatsCount;
 
 	seats = new Status * [rows];
 	for (size_t i = 0; i < rows; i++)
@@ -28,7 +29,7 @@ void Seats::copyFrom(const Seats& other)
 
 Seats::Seats()
 {
-	rows = cols = 0;
+	rows = cols = soldSeatsCount = 0;
 	seats = nullptr;
 }
 
@@ -36,6 +37,7 @@ Seats::Seats(unsigned rows, unsigned cols)
 {
 	this->rows = rows;
 	this->cols = cols;
+	soldSeatsCount = 0;
 
 	seats = new Status*[rows];
 	for (size_t i = 0; i < rows; i++)
@@ -58,6 +60,7 @@ Seats::Seats(Seats&& other)
 	rows = other.rows;
 	cols = other.cols;
 	seats = other.seats;
+	soldSeatsCount = other.soldSeatsCount;
 
 	other.seats = nullptr;
 }
@@ -72,6 +75,11 @@ const Status Seats::getStatus(unsigned row, unsigned col) const
 	if (0 < row && row <= rows && 0 < col && col <= cols)
 		return seats[row - 1][col - 1];
 	throw std::exception("Seat does not exist!");
+}
+
+unsigned Seats::getSoldSeatsCount() const
+{
+	return soldSeatsCount;
 }
 
 Seats& Seats::operator=(const Seats& other)
@@ -92,6 +100,7 @@ Seats& Seats::operator=(Seats&& other)
 		rows = other.rows;
 		cols = other.cols;
 		seats = other.seats;
+		soldSeatsCount = other.soldSeatsCount;
 
 		other.seats = nullptr;
 	}
@@ -101,6 +110,8 @@ Seats& Seats::operator=(Seats&& other)
 void Seats::changeStatus(unsigned row, unsigned seat, Status newStatus)
 {
 	seats[row - 1][seat - 1] = newStatus;
+	if (newStatus == sold)
+		soldSeatsCount++;
 }
 
 void Seats::print() const

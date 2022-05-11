@@ -11,6 +11,7 @@ class Seats {
 	unsigned rows;
 	unsigned cols;
 
+	unsigned soldSeatsCount;
 	void free();
 	void copyFrom(const Seats& other);
 public:
@@ -21,6 +22,7 @@ public:
 	~Seats();
 	
 	const Status getStatus(unsigned row, unsigned col) const;
+	unsigned getSoldSeatsCount() const;
 
 	Seats& operator=(const Seats& other);
 	Seats& operator=(Seats&& other);

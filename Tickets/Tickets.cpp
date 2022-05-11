@@ -24,16 +24,16 @@ int main()
 
     TicketCenter t("halls.txt");
     t.newEvent();
-
+    /*t.reserveTicket();
     t.reserveTicket();
+    t.availableSeats();*/
     t.reserveTicket();
-    t.availableSeats();
-
     //t.cancelReservation();
     t.buyTicket();
     t.availableSeats();
-    t.buyTicket();
-    t.availableSeats();
+    t.listOfBoughtTickets();
+    t.listOfBoughtTickets();
+    
     /*Event event;
     std::cin >> event;
     std::cout << event;*/

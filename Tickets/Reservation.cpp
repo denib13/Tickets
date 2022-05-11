@@ -4,9 +4,10 @@
 Reservation::Reservation() : event(), password(), note()
 {
 	row = seat = 0;
+	seatStatus = available;
 }
 
-Reservation::Reservation(const Event& event, unsigned row, unsigned seat, 
+Reservation::Reservation(const Event& event, unsigned row, unsigned seat, Status seatStatus,
 	const MyString& password, const MyString& note)
 {
 	setEvent(event);
@@ -14,6 +15,7 @@ Reservation::Reservation(const Event& event, unsigned row, unsigned seat,
 	setNote(note);
 	setRow(row);
 	setSeat(seat);
+	setStatus(seatStatus);
 }
 
 void Reservation::setEvent(const Event& event)
@@ -47,13 +49,35 @@ void Reservation::setSeat(unsigned seat)
 		throw std::exception("Invalid seat number!");
 }
 
+void Reservation::setStatus(Status newStatus)
+{
+	seatStatus = newStatus;
+}
+
 std::istream& operator>>(std::istream& stream, Reservation& reservation)
 {
 	Event event;
-	unsigned row, seat;
-	MyString password;
 	MyString note;
-	stream >> event >> row >> seat >> password >> note;
+	unsigned row, seat, status;
+
+	stream >> event;
+	stream >> row;
+	stream.ignore();
+	stream >> seat;
+	stream.ignore();
+	stream >> status;
+	stream.ignore();
+
+	char passwordString[256];
+	stream.getline(passwordString, 255, '|');
+	stream >> note;
+	MyString password(passwordString);
+
+	if (status == 1)
+		reservation.setStatus(reserved);
+	else if (status == 2)
+		reservation.setStatus(sold);
+
 	reservation.setEvent(event);
 	reservation.setRow(row);
 	reservation.setSeat(seat);
@@ -64,6 +88,7 @@ std::istream& operator>>(std::istream& stream, Reservation& reservation)
 
 std::ostream& operator<<(std::ostream& stream, const Reservation& reservation)
 {
-	stream << reservation.event << std::setw(8)<< reservation.row << std::setw(8) << reservation.seat << std::setw(8) << reservation.password << std::setw(8) << reservation.note << std::endl;
+	stream << reservation.event << '|' << reservation.row << '|' 
+		<< reservation.seat << '|' << reservation.seatStatus << '|' << reservation.password << '|' << reservation.note << '|';
 	return stream;
 }

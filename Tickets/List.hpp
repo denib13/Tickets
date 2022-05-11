@@ -8,27 +8,30 @@ class List
 	size_t capacity;
 
 	void free();
-	void copyFrom(const List&);
+	void copyFrom(const List& other);
 	void resize();
 	//void readFromFile(std::fstream& file);
-	size_t findElement(const T&) const;
+	size_t findElement(const T& element) const;
 public:
 	friend class TicketCenter;
 	friend class Event;
 
-	List(const char*);
-	List(const List&);
-	List(List&&);
+	List(/*const char* filePath*/);
+	List(const List& other);
+	List(List&& other);
 	~List();
 
-	List& operator=(const List&);
-	List& operator=(List&&);
-	T& operator[](size_t) const;
+	List& operator=(const List& other);
+	List& operator=(List&& other);
+	T& operator[](size_t index) const;
+
+	/*friend std::istream& operator>>(std::istream& stream, List<T>& object);
+	friend std::ostream& operator<<(std::ostream& stream, const List<T>& object);*/
 
 	size_t getCount() const;
 
-	void add(const T&);
-	void removeAtIndex(size_t);
+	void add(const T& object);
+	void removeAtIndex(size_t index);
 };
 
 template<typename T>
@@ -94,7 +97,7 @@ size_t List<T>::findElement(const T& element) const
 }
 
 template<typename T>
-List<T>::List(const char* filePath)
+List<T>::List(/*const char* filePath*/)
 {
 	count = 0;
 	capacity = 1;
@@ -169,6 +172,25 @@ T& List<T>::operator[](size_t index) const
 	if(0 <= index && index < count)
 		return data[index];
 }
+
+//template<typename T>
+//std::istream& operator>>(std::istream& stream, List<T>& object)
+//{
+//	T newElement;
+//	stream >> newElement;
+//	object.add(newElement);
+//	return stream;
+//}
+//
+//template<typename T>
+//std::ostream& operator<<(std::ostream& stream, const List<T>& object)
+//{
+//	for (size_t i = 0; i < object.count; i++)
+//	{
+//		stream << object.data[i] << std::endl;
+//	}
+//	return stream;
+//}
 
 template<typename T>
 size_t List<T>::getCount() const

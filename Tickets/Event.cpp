@@ -47,10 +47,18 @@ void Event::setHall(const Hall& hall)
 
 std::istream& operator>>(std::istream& stream, Event& event)
 {
-	MyString name;
 	Date date;
 	Hall hall;
-	stream >> name >> date >> hall;
+
+	char nameString[256];
+	stream.getline(nameString, 255, '|');
+	stream.ignore();
+	stream >> date;
+	stream.ignore();
+	stream>>hall;
+	stream.ignore();
+
+	MyString name(nameString);
 	event.setName(name);
 	event.setDate(date);
 	event.setHall(hall);
@@ -59,7 +67,7 @@ std::istream& operator>>(std::istream& stream, Event& event)
 
 std::ostream& operator<<(std::ostream& stream, const Event& event)
 {
-	stream << event.name << std::setw(8) << event.date << std::setw(8) << event.hall << std::endl;
+	stream << event.name << '|' << event.date << '|' << event.hall/* << std::endl*/;
 	return stream;
 }
 
