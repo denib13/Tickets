@@ -3,6 +3,7 @@
 #include <iomanip>
 #include "MyString.h"
 #include "Event.h"
+#pragma warning (disable:4996)
 
 int getNumberOfLines(std::fstream& file)
 {
@@ -61,7 +62,7 @@ void TicketCenter::writeEventsToFile(const char* filePath) const
 	
 	for (size_t i = 0; i < events.count; i++)
 	{
-		file << events.data[i] << '\n';
+		file << events.data[i] << std::endl;
 	}
 	try
 	{
@@ -80,7 +81,7 @@ void TicketCenter::writeReservationsToFile(const char* filePath) const
 
 	for (size_t i = 0; i < reservations.count; i++)
 	{
-		file << reservations.data[i] << '\n';
+		file << reservations.data[i] << std::endl;
 	}
 	
 	try
@@ -409,20 +410,209 @@ void TicketCenter::buyTicket()
 		std::cout << "Such event does not exist!";
 }
 
-void TicketCenter::listOfBoughtTickets()//not how it should function
+bool isDigit(char symbol)
+{
+	return ('0' <= symbol && symbol <= '9');
+}
+
+Date stringToDate(const MyString& string)
+{
+	char stringCopy[50];
+	strcpy(stringCopy, string.getString());
+	unsigned day = 0, month = 0, year = 0;
+	int nonDigitCount = 0;
+	for (size_t i = 0; i < string.getSize(); i++)
+	{
+		if (!isDigit(stringCopy[i]))
+		{
+			nonDigitCount++;
+		}
+		else
+		{
+			if (nonDigitCount == 0 && day == 0)
+				day = atoi(&stringCopy[i]);
+			else if (nonDigitCount == 1 && month == 0)
+				month = atoi(&stringCopy[i]);
+			else if (nonDigitCount == 2 && year == 0)
+				year = atoi(&stringCopy[i]);
+		}
+	}
+	Date result(day, month, year);
+	return result;
+}
+
+MyString formatDateString(const MyString& dateString)
+{
+	unsigned stringSize = dateString.getSize();
+	char* result = new char[stringSize + 1];
+
+	for (size_t i = 0; i < stringSize; i++)
+	{
+		if (isDigit(dateString.getString()[i]))
+			result[i] = dateString.getString()[i];
+		else
+			result[i] = '-';
+	}
+	result[stringSize] = '\0';
+	MyString toReturn(result);
+	delete[] result;
+	return toReturn;
+}
+
+void TicketCenter::listOfReservations()
+{
+	MyString name;
+	MyString dateString;
+
+	std::cout << "Enter event name or ALL: ";
+	std::cin >> name;
+	std::cout << "Enter event date or ALL: ";
+	std::cin >> dateString;
+
+
+	if (name == "ALL")
+	{
+		MyString newFilePath("report-ALL-");
+		if (dateString == "ALL")
+		{
+			newFilePath.concat("ALL.txt");
+			std::ofstream file(newFilePath.getString(), std::ios::out);
+			if (!file.is_open())
+				std::cout << "Error writing to file!" << std::endl;
+			else
+			{
+				for (size_t i = 0; i < reservations.count; i++)
+				{
+					if (reservations.data[i].seatStatus == reserved)
+						file << reservations.data[i] << std::endl;
+				}
+			}
+			try
+			{
+				file.close();
+			}
+			catch (const std::exception& ex)
+			{
+				std::cout << ex.what() << std::endl;
+			}
+		}
+		else
+		{//proverqvame samo data
+			newFilePath.concat(formatDateString(dateString));
+			newFilePath.concat(".txt");
+			Date date = stringToDate(dateString);
+			std::ofstream file(newFilePath.getString(), std::ios::out);
+			if (!file.is_open())
+				std::cout << "Error writing to file!" << std::endl;
+			else
+			{
+				for (size_t i = 0; i < reservations.count; i++)
+				{
+					if (reservations.data[i].event.date == date && reservations.data[i].seatStatus == reserved)
+						file << reservations.data[i] << std::endl;
+				}
+			}
+			try
+			{
+				file.close();
+			}
+			catch (const std::exception& ex)
+			{
+				std::cout << ex.what() << std::endl;
+			}
+		}
+	}
+	else
+	{
+		MyString newFilePath("report-");
+		newFilePath.concat(name);
+		newFilePath.concat("-");
+		if (dateString == "ALL")
+		{//proverqvame samo ime
+			newFilePath.concat("ALL.txt");
+
+			std::ofstream file(newFilePath.getString(), std::ios::out);
+			if (!file.is_open())
+				std::cout << "Error writing to file!" << std::endl;
+			else
+			{
+				for (size_t i = 0; i < reservations.count; i++)
+				{
+					if (reservations.data[i].event.name == name && reservations.data[i].seatStatus == reserved)
+						file << reservations.data[i] << std::endl;
+				}
+			}
+			try
+			{
+				file.close();
+			}
+			catch (const std::exception& ex)
+			{
+				std::cout << ex.what() << std::endl;
+			}
+		}
+		else
+		{//proverqvame data i ime
+			newFilePath.concat(formatDateString(dateString));
+			newFilePath.concat(".txt");
+			Date date = stringToDate(dateString);
+			
+			std::ofstream file(newFilePath.getString(), std::ios::out);
+			if (!file.is_open())
+				std::cout << "Error writing to file!" << std::endl;
+			else
+			{
+				for (size_t i = 0; i < reservations.count; i++)
+				{
+					if (reservations.data[i].event.name == name && reservations.data[i].event.date == date
+						&& reservations.data[i].seatStatus == reserved)
+						file << reservations.data[i] << std::endl;
+				}
+			}
+			try
+			{
+				file.close();
+			}
+			catch (const std::exception& ex)
+			{
+				std::cout << ex.what() << std::endl;
+			}
+			
+		}
+	}
+}
+
+void swapDates(Date& lhs, Date& rhs)
+{
+	Date temp = lhs;
+	lhs = rhs;
+	rhs = temp;
+}
+
+void TicketCenter::listOfBoughtTickets()
 {
 	MyString hallName;
+	Date startDate, endDate;
 
 	std::cout << "Enter hall number or ALL: ";
 	std::cin >> hallName;
+	std::cout << "Enter start date: ";
+	std::cin >> startDate;
+	std::cout << "Enter end date: ";
+	std::cin >> endDate;
+
+	if (endDate < startDate)
+		swapDates(startDate, endDate);
 
 	if (hallName == "ALL")
 	{
-		std::cout << "Name" << std::setw(8) << "Date" << std::setw(8) << "Hall number" << std::setw(8) << "Rows" << std::setw(8) << "Seats" << std::setw(8) << "Sold Seats" << std::endl;
+		std::cout << "Name Date Hall number Rows Seats Sold Seats" << std::endl;
 		for (size_t i = 0; i < events.count; i++)
 		{
-			std::cout << events[i] << std::setw(8) << events[i].seats.getSoldSeatsCount() << std::endl;
+			if(startDate < events.data[i].date && events.data[i].date < endDate)
+				std::cout << events[i] << std::setw(8) << events[i].seats.getSoldSeatsCount() << std::endl;
 		}
+		std::cin.ignore();
 	}
 	else
 	{
@@ -430,18 +620,18 @@ void TicketCenter::listOfBoughtTickets()//not how it should function
 		size_t hallIndex = getHallIndex(hallNumber);
 		if (hallIndex != -1)
 		{
-			std::cout << "Name" << std::setw(8) << "Date" << std::setw(8) << "Hall number" << std::setw(8) << "Rows" << std::setw(8) << "Seats" << std::setw(8) << "Sold Seats" << std::endl;
+			std::cout << "Name Date Hall number Rows Seats Sold Seats" << std::endl;
 			for (size_t i = 0; i < events.count; i++)
 			{
-				if (events[i].hall.getNumber() == hallNumber)
+				if (events[i].hall.getNumber() == hallNumber && startDate < events.data[i].date && events.data[i].date < endDate)
 					std::cout << events[i] << std::setw(8) << events[i].seats.getSoldSeatsCount() << std::endl;
 			}
+			std::cin.ignore();
 		}
 		else
 			std::cout << "Such hall does not exist!";
  	}
 }
-
 
 bool TicketCenter::isHallBuzy(const Hall& hall, const Date& date) const
 {
@@ -473,4 +663,3 @@ size_t TicketCenter::findReservation(const Event& event, unsigned row, unsigned 
 	}
 	return -1;
 }
-

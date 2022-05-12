@@ -101,3 +101,15 @@ bool operator==(const Date& lhs, const Date& rhs)
 	return (lhs.getDay() == rhs.getDay() && lhs.getMonth() == rhs.getMonth()
 		&& lhs.getYear() == rhs.getYear());
 }
+
+bool operator<(const Date& lhs, const Date& rhs)
+{
+	if (lhs.getYear() < rhs.getYear())
+		return true;
+	else if (lhs.getYear() == rhs.getYear() && lhs.getMonth() < rhs.getMonth())
+		return true;
+	else if (lhs.getYear() == rhs.getYear() && lhs.getMonth() == rhs.getMonth() && lhs.getDay() < rhs.getDay())
+		return true;
+	else
+		return false;
+}

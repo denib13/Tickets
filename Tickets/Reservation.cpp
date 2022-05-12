@@ -89,6 +89,6 @@ std::istream& operator>>(std::istream& stream, Reservation& reservation)
 std::ostream& operator<<(std::ostream& stream, const Reservation& reservation)
 {
 	stream << reservation.event << '|' << reservation.row << '|' 
-		<< reservation.seat << '|' << reservation.seatStatus << '|' << reservation.password << '|' << reservation.note << '|';
+		<< reservation.seat << '|' << reservation.seatStatus << '|' << reservation.password << '|' << reservation.note;
 	return stream;
 }

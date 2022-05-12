@@ -23,18 +23,20 @@ int main()
     std::cout << h;*/
 
     TicketCenter t("halls.txt");
-    t.newEvent();
+    t.listOfReservations();
+    //t.newEvent();
     /*t.reserveTicket();
     t.reserveTicket();
     t.availableSeats();*/
-    t.reserveTicket();
+    //t.reserveTicket();
     //t.cancelReservation();
-    t.buyTicket();
+    /*t.buyTicket();
     t.availableSeats();
     t.listOfBoughtTickets();
-    t.listOfBoughtTickets();
-    
+    t.listOfBoughtTickets();*/
+
     /*Event event;
     std::cin >> event;
     std::cout << event;*/
+
 }
