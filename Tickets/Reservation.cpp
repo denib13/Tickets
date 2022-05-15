@@ -58,24 +58,25 @@ std::istream& operator>>(std::istream& stream, Reservation& reservation)
 {
 	Event event;
 	MyString note;
-	unsigned row, seat, status;
+	unsigned row, seat;
 
 	stream >> event;
 	stream >> row;
 	stream.ignore();
 	stream >> seat;
 	stream.ignore();
-	stream >> status;
-	stream.ignore();
+
+	char status[25];
+	stream.getline(status, 24, '|');
 
 	char passwordString[256];
 	stream.getline(passwordString, 255, '|');
 	stream >> note;
 	MyString password(passwordString);
 
-	if (status == 1)
+	if (strcmp(status,"reserved") == 0)
 		reservation.setStatus(reserved);
-	else if (status == 2)
+	else if (strcmp(status, "sold") == 0)
 		reservation.setStatus(sold);
 
 	reservation.setEvent(event);
@@ -88,7 +89,12 @@ std::istream& operator>>(std::istream& stream, Reservation& reservation)
 
 std::ostream& operator<<(std::ostream& stream, const Reservation& reservation)
 {
-	stream << reservation.event << '|' << reservation.row << '|' 
-		<< reservation.seat << '|' << reservation.seatStatus << '|' << reservation.password << '|' << reservation.note;
+	stream << reservation.event << '|' << reservation.row << '|'
+		<< reservation.seat << '|';
+	if (reservation.seatStatus == reserved)
+		stream << "reserved";
+	else
+		stream << "sold";
+	stream << '|' << reservation.password << '|' << reservation.note;
 	return stream;
 }

@@ -1,8 +1,13 @@
-event|01/01/2022|2       4       7|3|2|1|password||
-event|02/02/2022|6       4       5|3|4|1|pas||
-event3|03/03/2022|6       4       5|3|3|1|hi||
-event|01/01/2022|2       4       7|2|2|2|||
-Chicago|05/05/2022|6       4       5|4|4|1|pswrd||
-Chicago|05/05/2022|6       4       5|3|3|2|||
-event5|02/06/2022|6       4       5|1|1|1|123||
-event5|02/06/2022|6       4       5|4|4|2|||
+Chicago|05/05/2022|1      12      15|4|4|reserved|pswrd|
+Chicago|05/05/2022|1      12      15|1|3|sold||
+Swan Lake|04/07/2022|2      16      25|5|10|reserved|12345|note
+Cinderella|06/06/2022|4      15      10|5|9|reserved|hello|
+Chicago|05/05/2022|1      12      15|7|10|reserved|asdgsf|
+Swan Lake|04/07/2022|2      16      25|10|9|sold||
+Hamlet|02/08/2022|4      15      10|3|7|sold||
+Hamlet|06/06/2022|2      16      25|6|8|reserved|hgfd|
+Red Riding Hood|02/08/2022|3      20      20|5|3|sold||
+Red Riding Hood|02/08/2022|3      20      20|5|8|reserved|qwerty|
+Red Riding Hood|02/08/2022|3      20      20|4|8|reserved|mnbv|
+Hamlet|02/08/2022|4      15      10|12|5|reserved|asdfghj|note123
+Cinderella|06/06/2022|4      15      10|4|3|reserved|poijnk|

@@ -1,5 +1,4 @@
 #include "Event.h"
-#include <iomanip>
 
 Event::Event() : date(), hall(), seats()
 {
@@ -67,7 +66,7 @@ std::istream& operator>>(std::istream& stream, Event& event)
 
 std::ostream& operator<<(std::ostream& stream, const Event& event)
 {
-	stream << event.name << '|' << event.date << '|' << event.hall/* << std::endl*/;
+	stream << event.name << '|' << event.date << '|' << event.hall;
 	return stream;
 }
 

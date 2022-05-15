@@ -10,13 +10,12 @@ class List
 	void free();
 	void copyFrom(const List& other);
 	void resize();
-	//void readFromFile(std::fstream& file);
 	size_t findElement(const T& element) const;
 public:
 	friend class TicketCenter;
 	friend class Event;
 
-	List(/*const char* filePath*/);
+	List();
 	List(const List& other);
 	List(List&& other);
 	~List();
@@ -24,9 +23,6 @@ public:
 	List& operator=(const List& other);
 	List& operator=(List&& other);
 	T& operator[](size_t index) const;
-
-	/*friend std::istream& operator>>(std::istream& stream, List<T>& object);
-	friend std::ostream& operator<<(std::ostream& stream, const List<T>& object);*/
 
 	size_t getCount() const;
 
@@ -67,23 +63,6 @@ void List<T>::copyFrom(const List<T>& other)
 		data[i] = other.data[i];
 	}
 }
-//
-//template<typename T>
-//void List<T>::readFromFile(std::fstream& file)
-//{
-//	size_t lines = getNumberOfLines(file);
-//	if (lines != 0)
-//	{
-//		free();
-//		capacity = count = lines - 1; //-1 because first line consists of headings
-//		data = new T [capacity];
-//
-//		for (size_t i = 0; i < count; i++)
-//		{
-//			//file >> data[i];
-//		}
-//	}
-//}
 
 template<typename T>
 size_t List<T>::findElement(const T& element) const
@@ -97,25 +76,11 @@ size_t List<T>::findElement(const T& element) const
 }
 
 template<typename T>
-List<T>::List(/*const char* filePath*/)
+List<T>::List()
 {
 	count = 0;
 	capacity = 1;
 	data = new T[capacity];
-
-	//std::fstream file(filePath, std::ios::in);
-	//if (!file.is_open())
-	//	throw std::exception("Error reading from file!");
-
-	//readFromFile(file);
-	//try
-	//{
-	//	file.close();
-	//}
-	//catch (const std::exception& ex)
-	//{
-	//	std::cout << ex.what() << std::endl;
-	//}
 }
 
 template<typename T>
@@ -172,25 +137,6 @@ T& List<T>::operator[](size_t index) const
 	if(0 <= index && index < count)
 		return data[index];
 }
-
-//template<typename T>
-//std::istream& operator>>(std::istream& stream, List<T>& object)
-//{
-//	T newElement;
-//	stream >> newElement;
-//	object.add(newElement);
-//	return stream;
-//}
-//
-//template<typename T>
-//std::ostream& operator<<(std::ostream& stream, const List<T>& object)
-//{
-//	for (size_t i = 0; i < object.count; i++)
-//	{
-//		stream << object.data[i] << std::endl;
-//	}
-//	return stream;
-//}
 
 template<typename T>
 size_t List<T>::getCount() const

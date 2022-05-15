@@ -25,7 +25,7 @@ class TicketCenter
 	void loadEventsList(const char* filePath);
 	void loadReservationsList(const char* filePath);
 public:
-	TicketCenter(const char* filePath);
+	TicketCenter();
 	TicketCenter(const TicketCenter& other);
 	TicketCenter(TicketCenter&& other);
 	~TicketCenter();
@@ -40,4 +40,5 @@ public:
 	void buyTicket();
 	void listOfReservations();
 	void listOfBoughtTickets();
+	void run();
 };

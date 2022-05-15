@@ -21,7 +21,7 @@ Date::Date(unsigned day, unsigned month, unsigned year)
 void Date::setDay(unsigned day)
 {
 	if (day == 0)
-		throw std::exception("Out of range exception");
+		throw std::exception("Invalid day");
 	else if (month == 2)
 	{
 		if (isLeapYear() && day <= 29)
@@ -29,14 +29,14 @@ void Date::setDay(unsigned day)
 		else if(day <= daysInMonth[1])
 			this->day = day;
 		else
-			throw std::exception("Out of range exception");
+			throw std::exception("Invalid day");
 	}
 	else
 	{
 		if (day <= daysInMonth[month - 1])
 			this->day = day;
 		else
-			throw std::exception("Out of range exception");
+			throw std::exception("Invalid day");
 	}
 }
 
@@ -45,13 +45,13 @@ void Date::setMonth(unsigned month)
 	if (1 <= month && month <= 12)
 		this->month = month;
 	else
-		throw std::exception("Out of range exception");
+		throw std::exception("Invalid month");
 }
 
 void Date::setYear(unsigned year)
 {
 	if (year < 2022)
-		throw std::exception("Out of range exception");
+		throw std::exception("Year cannot be before 2022!");
 	else
 		this->year = year;
 }

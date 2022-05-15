@@ -26,6 +26,18 @@ int getNumberOfLines(std::fstream& file)
 	return count;
 }
 
+void closeFile(std::fstream& file)
+{
+	try
+	{
+		file.close();
+	}
+	catch (const std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
+}
+
 void TicketCenter::free()
 {
 	delete[] halls;
@@ -58,52 +70,45 @@ void TicketCenter::writeEventsToFile(const char* filePath) const
 {
 	std::fstream file(filePath, std::ios::out | std::ios::trunc);
 	if (!file.is_open())
-		throw std::exception("Error writing to file!");
-	
+	{
+		std::cout << "Error writing to file!" << std::endl;
+		std::cin.ignore();
+	}
+
 	for (size_t i = 0; i < events.count; i++)
 	{
 		file << events.data[i] << std::endl;
 	}
-	try
-	{
-		file.close();
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << ex.what() << std::endl;
-	}
+	closeFile(file);
 }
+
 void TicketCenter::writeReservationsToFile(const char* filePath) const
 {
 	std::fstream file(filePath, std::ios::out | std::ios::trunc);
 	if (!file.is_open())
-		throw std::exception("Error writing to file!");
+	{
+		std::cout << "Error writing to file!" << std::endl;
+		std::cin.ignore();
+	}
 
 	for (size_t i = 0; i < reservations.count; i++)
 	{
 		file << reservations.data[i] << std::endl;
 	}
-	
-	try
-	{
-		file.close();
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << ex.what() << std::endl;
-	}
+	closeFile(file);
 }
+
 void TicketCenter::loadReservationsList(const char* filePath)
 {
 	std::fstream file(filePath, std::ios::in);
 	if (!file.is_open())
-		throw std::exception("Error reading from file!");
+	{
+		std::cout << "Error reading from file!" << std::endl;
+		std::cin.ignore();
+	}
 
-	unsigned size = getNumberOfLines(file);//ako ima zaglaven red da e -1
+	unsigned size = getNumberOfLines(file);
 	file.seekg(0, std::ios::beg);
-	////първият ред от файла е заглавен ред, затова го прочитаме и пропускаме
-	//char buff[1024];
-	//file.getline(buff, 1023);
 
 	for (size_t i = 0; i < size; i++)
 	{
@@ -113,27 +118,20 @@ void TicketCenter::loadReservationsList(const char* filePath)
 		size_t eventIndex = findEvent(newReservation.event.name, newReservation.event.date);
 		events[eventIndex].seats.changeStatus(newReservation.row, newReservation.seat, newReservation.seatStatus);
 	}
-	try
-	{
-		file.close();
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << ex.what() << std::endl;
-	}
+	closeFile(file);
 }
 
 void TicketCenter::loadEventsList(const char* filePath)
 {
 	std::fstream file(filePath, std::ios::in);
 	if (!file.is_open())
-		throw std::exception("Error reading from file!");
+	{
+		std::cout << "Error reading from file!" << std::endl;
+		std::cin.ignore();
+	}
 
-	unsigned size = getNumberOfLines(file);//ako ima zaglaven red da e -1
+	unsigned size = getNumberOfLines(file);
 	file.seekg(0, std::ios::beg);
-	////първият ред от файла е заглавен ред, затова го прочитаме и пропускаме
-	//char buff[1024];
-	//file.getline(buff, 1023);
 
 	for (size_t i = 0; i < size; i++)
 	{
@@ -141,24 +139,20 @@ void TicketCenter::loadEventsList(const char* filePath)
 		file >> newEvent;
 		events.add(newEvent);
 	}
-	try
-	{
-		file.close();
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << ex.what() << std::endl;
-	}
+	closeFile(file);
 }
 
-TicketCenter::TicketCenter(const char* filePath)
+TicketCenter::TicketCenter()
 {
 	loadEventsList(eventsFile);
 	loadReservationsList(reservationsFile);
 
-	std::fstream file(filePath, std::ios::in);
+	std::fstream file(hallsFile, std::ios::in);
 	if (!file.is_open())
-		throw std::exception("Error reading from file!");
+	{
+		std::cout << "Error reading from file!" << std::endl;
+		std::cin.ignore();
+	}
 
 	hallsCount = getNumberOfLines(file) - 1;
 
@@ -170,28 +164,21 @@ TicketCenter::TicketCenter(const char* filePath)
 	for (size_t i = 0; i < hallsCount; i++)
 	{
 		file >> halls[i];
-		//std::cout << halls[i];
 	}
-	
-	try
-	{
-		file.close();
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << ex.what() << std::endl;
-	}
+	closeFile(file);
 }
 
-TicketCenter::TicketCenter(const TicketCenter& other) : events(other.events), reservations(other.reservations)
+TicketCenter::TicketCenter(const TicketCenter& other)
 {
 	copyFrom(other);
 }
 
-TicketCenter::TicketCenter(TicketCenter&& other) : events(other.events), reservations(other.reservations)
+TicketCenter::TicketCenter(TicketCenter&& other)
 {
 	hallsCount = other.hallsCount;
 	halls = other.halls;
+	events = other.events;
+	reservations = other.reservations;
 
 	other.halls = nullptr;
 }
@@ -220,6 +207,8 @@ TicketCenter& TicketCenter::operator=(TicketCenter&& other)
 		free();
 		hallsCount = other.hallsCount;
 		halls = other.halls;
+		events = other.events;
+		reservations = other.reservations;
 
 		other.halls = nullptr;
 	}
@@ -228,186 +217,222 @@ TicketCenter& TicketCenter::operator=(TicketCenter&& other)
 
 void TicketCenter::newEvent()
 {
-	MyString name;
-	Date date;
-	unsigned hallNum;
-
-	std::cout << "Enter event name: ";
-	std::cin >> name;
-	std::cout << "Enter event date: "; //fix exceptions catching issues
-	std::cin >> date;
-
-	unsigned hallIndex;
-	do
+	try
 	{
-		std::cout << "Enter event hall number: ";
-		std::cin >> hallNum;
-		hallIndex = getHallIndex(hallNum);
-	} while (hallIndex == -1);
+		MyString name;
+		Date date;
+		unsigned hallNum;
 
-	if (!isHallBuzy(halls[hallIndex], date))
-	{
-		Event newEvent(name, date, halls[hallIndex]);
-		//just for testing purposes
-		std::cout << newEvent << std::endl;
-		std::cin.ignore();
-		events.add(newEvent);
+		std::cout << "Enter event name: ";
+		std::cin >> name;
+		std::cout << "Enter event date: ";
+		std::cin >> date;
+
+		unsigned hallIndex;
+		do
+		{
+			std::cout << "Enter event hall number: ";
+			std::cin >> hallNum;
+			hallIndex = getHallIndex(hallNum);
+		} while (hallIndex == -1);
+
+		if (!isHallBuzy(halls[hallIndex], date))
+		{
+			Event newEvent(name, date, halls[hallIndex]);
+			std::cin.ignore();
+			events.add(newEvent);
+			std::cout << "Event added successfully!" << std::endl;
+		}
+		else
+			throw std::exception("Hall is buzy on this date!");
 	}
-	else
+	catch (const std::exception& ex)
 	{
-		std::cout << "Hall is buzy on this date!" << std::endl;
-		std::cin.ignore();
+		std::cout << ex.what() << std::endl;
 	}
-		
-	//add validation
 }
 
 void TicketCenter::availableSeats()
 {
-	MyString eventName;
-	Date eventDate;
-	std::cout << "Enter event name: ";
-	std::cin >> eventName;
-	std::cout << "Enter event date: ";
-	std::cin >> eventDate;
-
-	size_t eventIndex = findEvent(eventName, eventDate);
-	if (eventIndex != -1)
+	try
 	{
-		events[eventIndex].seats.print();
-		std::cin.ignore();
+		MyString eventName;
+		Date eventDate;
+		std::cout << "Enter event name: ";
+		std::cin >> eventName;
+		std::cout << "Enter event date: ";
+		std::cin >> eventDate;
+
+		size_t eventIndex = findEvent(eventName, eventDate);
+		if (eventIndex != -1)
+		{
+			events[eventIndex].seats.print();
+			std::cin.ignore();
+		}
+		else
+			throw std::exception("Such event does not exist!");
 	}
-	else
-		std::cout << "Such event does not exist!";
+	catch (const std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
 }
 
 void TicketCenter::reserveTicket()
 {
-	MyString eventName, password, note;
-	Date eventDate;
-	unsigned row, seat;
-
-	std::cout << "Enter event name: ";
-	std::cin >> eventName;
-	std::cout << "Enter event date: ";
-	std::cin >> eventDate;
-
-	size_t eventIndex = findEvent(eventName, eventDate);
-	if (eventIndex != -1)
+	try
 	{
-		std::cout << "Enter row: ";
-		std::cin >> row;
-		std::cout << "Enter seat: ";
-		std::cin >> seat;
-		std::cin.ignore();
-		
-		if (events[eventIndex].seats.getStatus(row, seat) == available)
-		{
-			std::cout << "Enter password: ";
-			std::cin >> password;
-			std::cout << "Enter note or press enter to skip: ";
-			std::cin >> note;
+		MyString eventName, password, note;
+		Date eventDate;
+		unsigned row, seat;
 
-			Reservation newReservation(events[eventIndex], row, seat, reserved, password, note);
-			std::cout << newReservation;
-			reservations.add(newReservation);
-			events[eventIndex].seats.changeStatus(row, seat, reserved);
+		std::cout << "Enter event name: ";
+		std::cin >> eventName;
+		std::cout << "Enter event date: ";
+		std::cin >> eventDate;
+
+		size_t eventIndex = findEvent(eventName, eventDate);
+		if (eventIndex != -1)
+		{
+			std::cout << "Enter row: ";
+			std::cin >> row;
+			std::cout << "Enter seat: ";
+			std::cin >> seat;
+			std::cin.ignore();
+
+			if (events[eventIndex].seats.getStatus(row, seat) == available)
+			{
+				std::cout << "Enter password: ";
+				std::cin >> password;
+				std::cout << "Enter note or press enter to skip: ";
+				std::cin >> note;
+
+				Reservation newReservation(events[eventIndex], row, seat, reserved, password, note);
+				reservations.add(newReservation);
+				events[eventIndex].seats.changeStatus(row, seat, reserved);
+
+				std::cout << "Reservation added successfully!" << std::endl;
+			}
+			else
+				throw std::exception("Seat is not available!");
 		}
 		else
-			std::cout << "Seat is not available!" << std::endl;
+			throw std::exception("Such event does not exist!");
 	}
-	else
-		std::cout << "Such event does not exist!";
+	catch (const std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
 }
 
 void TicketCenter::cancelReservation()
 {
-	MyString eventName;
-	Date eventDate;
-	unsigned row, seat;
-	MyString password;
-
-	std::cout << "Enter event name: ";
-	std::cin >> eventName;
-	std::cout << "Enter event date: ";
-	std::cin >> eventDate;
-
-	size_t eventIndex = findEvent(eventName, eventDate);
-	if (eventIndex != -1)
+	try
 	{
-		std::cout << "Enter row: ";
-		std::cin >> row;
-		std::cout << "Enter seat: ";
-		std::cin >> seat;
-		std::cin.ignore();
+		MyString eventName;
+		Date eventDate;
+		unsigned row, seat;
+		MyString password;
 
-		size_t reservationIndex = findReservation(events[eventIndex], row, seat);
-		if (reservationIndex != -1)
+		std::cout << "Enter event name: ";
+		std::cin >> eventName;
+		std::cout << "Enter event date: ";
+		std::cin >> eventDate;
+
+		size_t eventIndex = findEvent(eventName, eventDate);
+		if (eventIndex != -1)
 		{
-			std::cout << "Enter password: ";
-			std::cin >> password;
-			if (reservations[reservationIndex].password == password)
+			std::cout << "Enter row: ";
+			std::cin >> row;
+			std::cout << "Enter seat: ";
+			std::cin >> seat;
+			std::cin.ignore();
+
+			size_t reservationIndex = findReservation(events[eventIndex], row, seat);
+			if (reservationIndex != -1)
 			{
-				reservations.removeAtIndex(reservationIndex);
-				events[eventIndex].seats.changeStatus(row, seat, available);
+				std::cout << "Enter password: ";
+				std::cin >> password;
+				if (reservations[reservationIndex].password == password)
+				{
+					reservations.removeAtIndex(reservationIndex);
+					events[eventIndex].seats.changeStatus(row, seat, available);
+
+					std::cout << "Reservation cancelled successfully!" << std::endl;
+				}
+				else
+					throw std::exception("Wrong password!");
 			}
 			else
-				std::cout << "Wrong password!";
+				throw std::exception("Such reservation does not exist!");
 		}
 		else
-			std::cout << "Such reservation does not exist!";
+			throw std::exception("Such event does not exist!");
 	}
-	else
-		std::cout << "Such event does not exist!";
+	catch (const std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
 }
 
 void TicketCenter::buyTicket()
 {
-	MyString eventName;
-	Date eventDate;
-	unsigned row, seat;
-
-	std::cout << "Enter event name: ";
-	std::cin >> eventName;
-	std::cout << "Enter event date: ";
-	std::cin >> eventDate;
-
-	size_t eventIndex = findEvent(eventName, eventDate);
-	if (eventIndex != -1)
+	try
 	{
-		std::cout << "Enter row: ";
-		std::cin >> row;
-		std::cout << "Enter seat: ";
-		std::cin >> seat;
-		std::cin.ignore();
+		MyString eventName;
+		Date eventDate;
+		unsigned row, seat;
 
-		Status seatStatus = events[eventIndex].seats.getStatus(row, seat);
-		if (seatStatus == available)
-		{
-			Reservation newReservation(events[eventIndex], row, seat, sold, "", "");
-			reservations.add(newReservation);
-			events[eventIndex].seats.changeStatus(row, seat, sold);
-		}
-		else if (seatStatus == reserved)
-		{
-			MyString password;
-			std::cout << "Seat is reserved. Enter reservation password: ";
-			std::cin >> password;
+		std::cout << "Enter event name: ";
+		std::cin >> eventName;
+		std::cout << "Enter event date: ";
+		std::cin >> eventDate;
 
-			size_t reservationIndex = findReservation(events[eventIndex], row, seat);
-			if (reservations[reservationIndex].password == password)
+		size_t eventIndex = findEvent(eventName, eventDate);
+		if (eventIndex != -1)
+		{
+			std::cout << "Enter row: ";
+			std::cin >> row;
+			std::cout << "Enter seat: ";
+			std::cin >> seat;
+			std::cin.ignore();
+
+			Status seatStatus = events[eventIndex].seats.getStatus(row, seat);
+			if (seatStatus == available)
 			{
-				reservations[reservationIndex].seatStatus = sold;
+				Reservation newReservation(events[eventIndex], row, seat, sold, "", "");
+				reservations.add(newReservation);
 				events[eventIndex].seats.changeStatus(row, seat, sold);
+
+				std::cout << "Ticket bought successfully!" << std::endl;
+			}
+			else if (seatStatus == reserved)
+			{
+				MyString password;
+				std::cout << "Seat is reserved. Enter reservation password: ";
+				std::cin >> password;
+
+				size_t reservationIndex = findReservation(events[eventIndex], row, seat);
+				if (reservations[reservationIndex].password == password)
+				{
+					reservations[reservationIndex].seatStatus = sold;
+					events[eventIndex].seats.changeStatus(row, seat, sold);
+
+					std::cout << "Ticket bought successfully!" << std::endl;
+				}
+				else
+					throw std::exception("Wrong password!");
 			}
 			else
-				std::cout << "Wrong password!";
+				throw std::exception("Seat is already sold!");
 		}
 		else
-			std::cout << "Seat is already sold!";
+			throw std::exception("Such event does not exist!");
 	}
-	else
-		std::cout << "Such event does not exist!";
+	catch (const std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
 }
 
 bool isDigit(char symbol)
@@ -476,9 +501,12 @@ void TicketCenter::listOfReservations()
 		if (dateString == "ALL")
 		{
 			newFilePath.concat("ALL.txt");
-			std::ofstream file(newFilePath.getString(), std::ios::out);
+			std::fstream file(newFilePath.getString(), std::ios::out);
 			if (!file.is_open())
+			{
 				std::cout << "Error writing to file!" << std::endl;
+				std::cin.ignore();
+			}
 			else
 			{
 				for (size_t i = 0; i < reservations.count; i++)
@@ -487,23 +515,20 @@ void TicketCenter::listOfReservations()
 						file << reservations.data[i] << std::endl;
 				}
 			}
-			try
-			{
-				file.close();
-			}
-			catch (const std::exception& ex)
-			{
-				std::cout << ex.what() << std::endl;
-			}
+			closeFile(file);
 		}
 		else
-		{//proverqvame samo data
+		{
+			//проверяваме само дата
 			newFilePath.concat(formatDateString(dateString));
 			newFilePath.concat(".txt");
 			Date date = stringToDate(dateString);
-			std::ofstream file(newFilePath.getString(), std::ios::out);
+			std::fstream file(newFilePath.getString(), std::ios::out);
 			if (!file.is_open())
+			{
 				std::cout << "Error writing to file!" << std::endl;
+				std::cin.ignore();
+			}
 			else
 			{
 				for (size_t i = 0; i < reservations.count; i++)
@@ -512,14 +537,7 @@ void TicketCenter::listOfReservations()
 						file << reservations.data[i] << std::endl;
 				}
 			}
-			try
-			{
-				file.close();
-			}
-			catch (const std::exception& ex)
-			{
-				std::cout << ex.what() << std::endl;
-			}
+			closeFile(file);
 		}
 	}
 	else
@@ -528,12 +546,16 @@ void TicketCenter::listOfReservations()
 		newFilePath.concat(name);
 		newFilePath.concat("-");
 		if (dateString == "ALL")
-		{//proverqvame samo ime
+		{
+			//проверяваме само име
 			newFilePath.concat("ALL.txt");
 
-			std::ofstream file(newFilePath.getString(), std::ios::out);
+			std::fstream file(newFilePath.getString(), std::ios::out);
 			if (!file.is_open())
+			{
 				std::cout << "Error writing to file!" << std::endl;
+				std::cin.ignore();
+			}
 			else
 			{
 				for (size_t i = 0; i < reservations.count; i++)
@@ -542,24 +564,21 @@ void TicketCenter::listOfReservations()
 						file << reservations.data[i] << std::endl;
 				}
 			}
-			try
-			{
-				file.close();
-			}
-			catch (const std::exception& ex)
-			{
-				std::cout << ex.what() << std::endl;
-			}
+			closeFile(file);
 		}
 		else
-		{//proverqvame data i ime
+		{
+			//проверяваме дата и име
 			newFilePath.concat(formatDateString(dateString));
 			newFilePath.concat(".txt");
 			Date date = stringToDate(dateString);
-			
-			std::ofstream file(newFilePath.getString(), std::ios::out);
+
+			std::fstream file(newFilePath.getString(), std::ios::out);
 			if (!file.is_open())
+			{
 				std::cout << "Error writing to file!" << std::endl;
+				std::cin.ignore();
+			}
 			else
 			{
 				for (size_t i = 0; i < reservations.count; i++)
@@ -569,15 +588,7 @@ void TicketCenter::listOfReservations()
 						file << reservations.data[i] << std::endl;
 				}
 			}
-			try
-			{
-				file.close();
-			}
-			catch (const std::exception& ex)
-			{
-				std::cout << ex.what() << std::endl;
-			}
-			
+			closeFile(file);
 		}
 	}
 }
@@ -591,46 +602,86 @@ void swapDates(Date& lhs, Date& rhs)
 
 void TicketCenter::listOfBoughtTickets()
 {
-	MyString hallName;
-	Date startDate, endDate;
-
-	std::cout << "Enter hall number or ALL: ";
-	std::cin >> hallName;
-	std::cout << "Enter start date: ";
-	std::cin >> startDate;
-	std::cout << "Enter end date: ";
-	std::cin >> endDate;
-
-	if (endDate < startDate)
-		swapDates(startDate, endDate);
-
-	if (hallName == "ALL")
+	try
 	{
-		std::cout << "Name Date Hall number Rows Seats Sold Seats" << std::endl;
-		for (size_t i = 0; i < events.count; i++)
-		{
-			if(startDate < events.data[i].date && events.data[i].date < endDate)
-				std::cout << events[i] << std::setw(8) << events[i].seats.getSoldSeatsCount() << std::endl;
-		}
-		std::cin.ignore();
-	}
-	else
-	{
-		int hallNumber = atoi(hallName.getString());
-		size_t hallIndex = getHallIndex(hallNumber);
-		if (hallIndex != -1)
+		MyString hallName;
+		Date startDate, endDate;
+
+		std::cout << "Enter hall number or ALL: ";
+		std::cin >> hallName;
+		std::cout << "Enter start date: ";
+		std::cin >> startDate;
+		std::cout << "Enter end date: ";
+		std::cin >> endDate;
+
+		if (endDate < startDate)
+			swapDates(startDate, endDate);
+
+		if (hallName == "ALL")
 		{
 			std::cout << "Name Date Hall number Rows Seats Sold Seats" << std::endl;
 			for (size_t i = 0; i < events.count; i++)
 			{
-				if (events[i].hall.getNumber() == hallNumber && startDate < events.data[i].date && events.data[i].date < endDate)
-					std::cout << events[i] << std::setw(8) << events[i].seats.getSoldSeatsCount() << std::endl;
+				if (startDate < events.data[i].date && events.data[i].date < endDate)
+					std::cout << events[i] << '|' << events[i].seats.getSoldSeatsCount() << std::endl;
 			}
 			std::cin.ignore();
 		}
 		else
-			std::cout << "Such hall does not exist!";
- 	}
+		{
+			int hallNumber = atoi(hallName.getString());
+			size_t hallIndex = getHallIndex(hallNumber);
+			if (hallIndex != -1)
+			{
+				std::cout << "Name Date Hall number Rows Seats Sold Seats" << std::endl;
+				for (size_t i = 0; i < events.count; i++)
+				{
+					if (events[i].hall.getNumber() == hallNumber && startDate < events.data[i].date && events.data[i].date < endDate)
+						std::cout << events[i] << std::setw(8) << events[i].seats.getSoldSeatsCount() << std::endl;
+				}
+				std::cin.ignore();
+			}
+			else
+				throw std::exception("Such hall does not exist!");
+		}
+	}
+	catch (const std::exception& ex)
+	{
+		std::cout << ex.what() << std::endl;
+	}
+}
+
+void printCommands()
+{
+	std::cout << "1. Add event" << '\n' << "2. Available seats for event" << '\n'
+		<< "3. Reserve a ticket" << '\n' << "4. Cancel reservation" << '\n'
+		<< "5. Buy a ticket" << '\n' << "6. Reservations report" << '\n'
+		<< "7. List of sold tickets" << '\n' << "8. END" << '\n';
+}
+
+void TicketCenter::run()
+{
+	printCommands();
+	unsigned cmdNum;
+	do
+	{
+		std::cout << "Enter command number: ";
+		std::cin >> cmdNum;
+		std::cin.ignore();
+
+		switch (cmdNum)
+		{
+		case 1: newEvent(); break;
+		case 2: availableSeats(); break;
+		case 3: reserveTicket(); break;
+		case 4: cancelReservation(); break;
+		case 5: buyTicket(); break;
+		case 6: listOfReservations(); break;
+		case 7: listOfBoughtTickets(); break;
+		default: break;
+		}
+
+	} while (cmdNum != 8);
 }
 
 bool TicketCenter::isHallBuzy(const Hall& hall, const Date& date) const

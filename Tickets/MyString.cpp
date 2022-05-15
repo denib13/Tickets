@@ -33,6 +33,14 @@ MyString::MyString(const MyString& other)
 	copyFrom(other);
 }
 
+MyString::MyString(MyString&& other)
+{
+	size = other.size;
+	str = other.str;
+
+	other.str = nullptr;
+}
+
 MyString::~MyString()
 {
 	free();
@@ -44,6 +52,19 @@ MyString& MyString::operator=(const MyString& other)
 	{
 		free();
 		copyFrom(other);
+	}
+	return *this;
+}
+
+MyString& MyString::operator=(MyString&& other)
+{
+	if (this != &other)
+	{
+		free();
+		size = other.size;
+		str = other.str;
+
+		other.str = nullptr;
 	}
 	return *this;
 }
